@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">SIP</string>
     <string name="action_settings">Settings</string>
+    <string name="login_title">Login</string>
+    <string name="logo">LOGO</string>
+    <string name="enter_name">Your Email</string>
+    <string name="password">Your Password</string>
 </resources>
