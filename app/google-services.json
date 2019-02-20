@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "53976824999",
+    "firebase_url": "https://sehat-itu-penting-pbd.firebaseio.com",
+    "project_id": "sehat-itu-penting-pbd",
+    "storage_bucket": "sehat-itu-penting-pbd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53976824999:android:d326458cb88ef7f4",
+        "android_client_info": {
+          "package_name": "com.example.sip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "53976824999-uphm2dt4ptv33fh6ap0e5sanm7t3vdbk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sip",
+            "certificate_hash": "2661069b6e80df46c1806848434247814f5c4138"
+          }
+        },
+        {
+          "client_id": "53976824999-7iru8c6rmfmipd80ftbr63tpkr22m6gp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs0klaJ_7YhU_nMU1LXChwmpmptTbjasM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "53976824999-7iru8c6rmfmipd80ftbr63tpkr22m6gp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
