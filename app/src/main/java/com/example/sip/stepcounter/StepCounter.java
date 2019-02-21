@@ -11,7 +11,7 @@ public class StepCounter implements SensorEventListener {
     private int sensorType = -999;
     private int stepCount;
     private SensorManager sm;
-    private StepCounterListener caller;
+    private StepCounterListener caller; // Callback whenever StepCounter detects a step
     private StepProcessor sp = null;
     private Sensor usedSensor;
 
@@ -38,7 +38,7 @@ public class StepCounter implements SensorEventListener {
 
     /*
      *  Register a listener for this counter
-     *  Listener will be notified if counter detects step
+     *  Listener will be notified if this counter detects a step
      */
     public void registerListener(StepCounterListener caller) {
         this.caller = caller;
