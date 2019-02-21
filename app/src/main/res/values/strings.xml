@@ -5,4 +5,8 @@
     <string name="logo">LOGO</string>
     <string name="enter_name">Your Email</string>
     <string name="password">Your Password</string>
+    <string name="already_have_account">Already have account?</string>
+    <string name="register_title">Register</string>
+    <string name="confirm_your_password">Confirm your password</string>
+    <string name="new_to_sip">New to SIP?</string>
 </resources>
