@@ -1,10 +1,14 @@
 package com.example.sip;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,10 +16,11 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class HomePage extends AppCompatActivity {
+public class HomePage extends AppCompatActivity implements StepCounter.OnFragmentInteractionListener {
     private FirebaseAuth authFirebase = FirebaseAuth.getInstance();
 
     @Override
@@ -35,14 +40,10 @@ public class HomePage extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.add(R.id.layout_main, new StepCounter());
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -62,8 +63,7 @@ public class HomePage extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
-        else if (id == R.id.action_logout) {
+        } else if (id == R.id.action_logout) {
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(HomePage.this, Login.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -78,5 +78,10 @@ public class HomePage extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
