@@ -12,26 +12,17 @@
         android:paddingTop="75dp"
         android:paddingRight="20dp"
         android:paddingBottom="100dp"
+        android:background="#6cd6cd"
         tools:context=".Login">
-
-        <TextView
-            android:id="@+id/loginView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:text="@string/login_title"
-            android:textSize="35sp" />
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/loginView"
+            android:layout_width="208dp"
+            android:layout_height="191dp"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
             android:contentDescription="@string/logo"
-            android:src="@drawable/sip_logo" />
+            android:src="@drawable/main_logo" />
 
         <EditText
             android:id="@+id/usernameField"
@@ -70,11 +61,11 @@
 
         <Button
             android:id="@+id/registerButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="-89dp"
-            android:layout_toStartOf="@+id/loginView"
+            android:layout_centerHorizontal="true"
             android:text="@string/login_title" />
 
     </RelativeLayout>

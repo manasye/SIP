@@ -37,22 +37,30 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 String emailValue = email.getText().toString();
                 String passwordValue = password.getText().toString();
-                mAuth.signInWithEmailAndPassword(emailValue, passwordValue)
-                        .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d("Sign in", "signInWithEmail:success");
-                                    goToMainPage();
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.d("Sign in", "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(Login.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                if (emailValue.isEmpty()) {
+                    email.requestFocus();
+                    Toast.makeText(Login.this, "Please fill in your email!", Toast.LENGTH_SHORT).show();
+                } else if (passwordValue.isEmpty()) {
+                    password.requestFocus();
+                    Toast.makeText(Login.this, "Please fill in your password!", Toast.LENGTH_SHORT).show();
+                } else {
+                    mAuth.signInWithEmailAndPassword(emailValue, passwordValue)
+                            .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d("Sign in", "signInWithEmail:success");
+                                        goToMainPage();
+                                    } else {
+                                        // If sign in fails, display a message to the user.
+                                        Log.d("Sign in", "signInWithEmail:failure", task.getException());
+                                        Toast.makeText(Login.this, "Authentication failed.",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         });
     }

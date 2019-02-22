@@ -30,10 +30,6 @@ public class HomePage extends AppCompatActivity {
         }
 
         // When logged in, get all data
-        String name = user.getDisplayName();
-        String email = user.getEmail();
-        Log.d("a", name);
-        Log.d("b", email);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -67,7 +63,20 @@ public class HomePage extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        else if (id == R.id.action_logout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(HomePage.this, Login.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /* Pressing back-button will now exit the application, rather than going to the login page */
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 }
