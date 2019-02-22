@@ -42,17 +42,26 @@ public class Register extends AppCompatActivity {
 
     public void register(View view) {
         // Get all register data
+        email = findViewById(R.id.usernameField);
+        String emailText = email.getText().toString();
         password = findViewById(R.id.passwordField);
         String passText = password.getText().toString();
         confPass = findViewById(R.id.confPasswordField);
         String confPassText = confPass.getText().toString();
-        // Check if confirm pass equal pass
-        if (!passText.equals(confPassText)) {
+
+        if (emailText.isEmpty()) {
+            email.requestFocus();
+            Toast.makeText(Register.this,"Please fill in the email!",Toast.LENGTH_SHORT).show();
+        } else if (passText.isEmpty()) {
+            password.requestFocus();
+            Toast.makeText(Register.this,"Please fill in the password!",Toast.LENGTH_SHORT).show();
+        } else if (confPassText.isEmpty()) {
+            confPass.requestFocus();
+            Toast.makeText(Register.this,"Please type in the password again!",Toast.LENGTH_SHORT).show();
+        } else if (!passText.equals(confPassText)) {
             Toast.makeText(Register.this, "Password and confirm password is not the same.",
-                    Toast.LENGTH_SHORT).show();
+            Toast.LENGTH_SHORT).show();
         } else {
-            email = findViewById(R.id.usernameField);
-            String emailText = email.getText().toString();
             authFirebase.createUserWithEmailAndPassword(emailText, passText)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
