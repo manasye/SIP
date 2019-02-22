@@ -30,10 +30,6 @@ public class HomePage extends AppCompatActivity {
         }
 
         // When logged in, get all data
-        String name = user.getDisplayName();
-        String email = user.getEmail();
-        Log.d("a", name);
-        Log.d("b", email);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
