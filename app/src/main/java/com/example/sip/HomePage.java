@@ -73,4 +73,10 @@ public class HomePage extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /* Pressing back-button will now exit the application, rather than going to the login page */
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 }
