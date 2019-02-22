@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:paddingBottom="50dp"
+        tools:context=".StepCounter">
+
+        <ImageView
+            android:id="@+id/historyImg"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="50dp"
+            android:contentDescription="@string/history"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:src="@drawable/history" />
+
+        <TextView
+            android:id="@+id/stepCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/historyImg"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/default_step"
+            android:textColor="@color/colorPrimary"
+            android:textSize="130sp" />
+
+        <TextView
+            android:id="@+id/stepDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/stepCount"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="50dp"
+            android:text="@string/step_s"
+            android:textColor="@color/design_default_color_primary"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/startBtn"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/stepDesc"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/buttonshape"
+            android:text="@string/start_step"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/shareBtn"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/startBtn"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/buttonshape"
+            android:text="@string/share_step"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+</ScrollView>
