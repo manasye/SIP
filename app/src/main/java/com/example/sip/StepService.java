@@ -24,6 +24,7 @@ public class StepService extends Service implements StepCounterListener {
     public static boolean isServiceRunning = false;
     private static final String NOTIF_CHANNEL = "[SIPFORGNDNOTIF]";
     private static final int FOREGROUND_SERVICE_ID = 1;
+    public static com.example.sip.StepCounter callback = null;
 
     private int currentStepCount;
     private StepCounter counter;
@@ -99,5 +100,8 @@ public class StepService extends Service implements StepCounterListener {
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = rebuildNotification();
         nm.notify(FOREGROUND_SERVICE_ID, notification);
+        if (callback != null) {
+            callback.onStepDetected(currentStepCount);
+        }
     }
 }

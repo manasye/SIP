@@ -43,8 +43,9 @@ public class StepCounter extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private Button startButton;
     private TextView stepCountTextView;
-    private com.example.sip.stepcounter.StepCounter counter;
+    private int stepCount;
 
     public StepCounter() {
         // Required empty public constructor
@@ -83,7 +84,7 @@ public class StepCounter extends Fragment {
         // Inflate the layout for this fragment
         View stepCounterView = inflater.inflate(R.layout.fragment_step_counter, container, false);
         Button shareButton = stepCounterView.findViewById(R.id.shareBtn);
-        final Button startButton = stepCounterView.findViewById(R.id.startBtn);
+        startButton = stepCounterView.findViewById(R.id.startBtn);
         stepCountTextView = (TextView) stepCounterView.findViewById(R.id.stepCount);
 
         // Set onclick listener on share button
@@ -143,10 +144,14 @@ public class StepCounter extends Fragment {
                 Intent intent = new Intent(getContext(), StepService.class);
                 if (StepService.isServiceRunning) {
                     intent.setAction(StepService.STOP_SERVICE);
+                    detachServiceListener();
                     startButton.setText(getString(R.string.start_step));
                 } else {
                     stepCountTextView.setText(getString(R.string.default_step));
                     intent.setAction(StepService.START_SERVICE);
+                    stepCountTextView.setText(getString(R.string.default_step));
+                    stepCount = 0;
+                    attachServiceListener();
                     startButton.setText(getString(R.string.stop_step));
                 }
                 getContext().startService(intent);
@@ -194,5 +199,35 @@ public class StepCounter extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void onStepDetected(int stepCount) {
+        this.stepCount = stepCount;
+        stepCountTextView.setText(Integer.toString(this.stepCount));
+    }
+
+    private void attachServiceListener() {
+        StepService.callback = this;
+    }
+
+    private void detachServiceListener() {
+        StepService.callback = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (StepService.isServiceRunning) {
+            attachServiceListener();
+            startButton.setText(getString(R.string.stop_step));
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (StepService.isServiceRunning) {
+            detachServiceListener();
+        }
     }
 }
