@@ -92,11 +92,11 @@ public class StepCounter extends Fragment {
                     return;
                 }
                 Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                Double latitude = location.getLatitude();
-//                Double longitude = location.getLongitude();
-//
-//                String uri = "http://maps.google.com/maps?daddr=" + latitude + "," + longitude;
-//                Log.d("URI", uri);
+                Double latitude = location.getLatitude();
+                Double longitude = location.getLongitude();
+
+                String uri = "http://maps.google.com/maps?daddr=" + latitude + "," + longitude;
+                Log.d("URI", uri);
 //                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
 //                sharingIntent.setType("text/plain");
 //                String ShareSub = "Here is my location";
