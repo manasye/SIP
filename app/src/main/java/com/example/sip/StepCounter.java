@@ -17,6 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.support.v4.app.Fragment;
+import android.widget.TextView;
+
+import com.example.sip.stepcounter.StepCounterListener;
 
 import static android.support.v4.content.ContextCompat.getSystemService;
 
@@ -29,7 +32,7 @@ import static android.support.v4.content.ContextCompat.getSystemService;
  * Use the {@link StepCounter#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StepCounter extends Fragment {
+public class StepCounter extends Fragment implements StepCounterListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -40,6 +43,10 @@ public class StepCounter extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private boolean isCounting;
+    private int stepCount;
+    private TextView stepCountTextView;
+    private com.example.sip.stepcounter.StepCounter counter;
 
     public StepCounter() {
         // Required empty public constructor
@@ -78,6 +85,12 @@ public class StepCounter extends Fragment {
         // Inflate the layout for this fragment
         View stepCounterView = inflater.inflate(R.layout.fragment_step_counter, container, false);
         Button shareButton = stepCounterView.findViewById(R.id.shareBtn);
+        final Button startButton = stepCounterView.findViewById(R.id.startBtn);
+        stepCountTextView = (TextView) stepCounterView.findViewById(R.id.stepCount);
+
+        // Initialize step counter
+        counter = new com.example.sip.stepcounter.StepCounter(getContext());
+        counter.registerListener(this);
 
         // Set onclick listener on share button
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +141,24 @@ public class StepCounter extends Fragment {
                 }
             }
         });
+
+        // Start button on click listener
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isCounting) {
+                    counter.stop();
+                    startButton.setText(getString(R.string.start_step));
+                } else {
+                    stepCountTextView.setText(getString(R.string.default_step));
+                    counter.start();
+                    startButton.setText(getString(R.string.stop_step));
+                }
+                isCounting = !isCounting;
+            }
+        });
+
+
         return stepCounterView;
     }
 
@@ -153,6 +184,11 @@ public class StepCounter extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onStepDetected(int stepCount) {
+        stepCountTextView.setText(Integer.toString(stepCount));
     }
 
     /**
