@@ -63,24 +63,27 @@ public class StepCounter extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-//        Button shareBtn = getView().findViewById(R.id.shareBtn);
-//        shareBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent sendIntent = new Intent();
-//                sendIntent.setAction(Intent.ACTION_SEND);
-//                sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-//                sendIntent.setType("text/plain");
-//                startActivity(sendIntent);
-//            }
-//        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_step_counter, container, false);
+        View stepCounterView = inflater.inflate(R.layout.fragment_step_counter, container, false);
+        shareButton = stepCounterView.findViewById(R.id.shareBtn);
+
+        // Set onclick listener on share button
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+            }
+        });
+        return stepCounterView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

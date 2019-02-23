@@ -42,12 +42,11 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
         setSupportActionBar(toolbar);
 
         // Start fragment step counter
+        StepCounter stepCounter = new StepCounter();
         FragmentManager fm = getFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.add(R.id.layout_main, new StepCounter());
+        fragmentTransaction.add(R.id.layout_main, stepCounter);
         fragmentTransaction.commit();
-
-        // Add onclick on share button
 
     }
 
