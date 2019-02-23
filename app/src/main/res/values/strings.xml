@@ -26,6 +26,9 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string name="tab_homepage">Home</string>
+    <string name="tab_history">History</string>
 
->>>>>>> e27ed38bb8bb4a4c911623c35ccd2f5ae72d8460
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
