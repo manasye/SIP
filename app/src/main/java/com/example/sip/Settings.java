@@ -7,23 +7,34 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.widget.Toast;
+import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.takisoft.fix.support.v7.preference.EditTextPreference;
+import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 public class Settings extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            this.finish();
+        }
+
+        return true;
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -31,7 +42,7 @@ public class Settings extends AppCompatActivity {
         private FirebaseAuth authFirebase = FirebaseAuth.getInstance();
 
         @Override
-        public void onCreatePreferences(Bundle bundle, String s) {
+        public void onCreatePreferencesFix(Bundle bundle, String s) {
             setPreferencesFromResource(R.xml.preferences, s);
             EditTextPreference stepGoal = (EditTextPreference) findPreference(getString(R.string.step_goal_pref));
             ListPreference sensorType = (ListPreference) findPreference(getString(R.string.sensor_select_pref));
@@ -42,7 +53,7 @@ public class Settings extends AppCompatActivity {
             String steps = sp.getString(stepGoal.getKey(), "0");
             stepGoal.setSummary(steps + " steps");
             String sensor = sp.getString(sensorType.getKey(), "undefined");
-            sensorType.setSummary("Currently using " + sensor);
+            sensorType.setSummary("Currently using " + getSensorDescription(Integer.parseInt(sensor)));
             logoutButton.setSummary("Currently logged in as " + authFirebase.getCurrentUser().getEmail());
 
             // Logout button listener
@@ -93,8 +104,19 @@ public class Settings extends AppCompatActivity {
                 etp.setSummary(value + " steps");
             } else if (pref.getKey().equals(getString(R.string.sensor_select_pref))) {
                 ListPreference lp = (ListPreference) pref;
-                String value = sp.getString(key,"undefined");
-                lp.setSummary("Currently using " + value);
+                String value = sp.getString(key,"-1");
+                lp.setSummary("Currently using " + getSensorDescription(Integer.parseInt(value)));
+            }
+        }
+
+        public static String getSensorDescription(int sensorId) {
+            switch(sensorId) {
+                case 1:
+                    return "Accelerometer";
+                case 2:
+                    return "Native Pedometer";
+                default:
+                    return "undefined";
             }
         }
     }

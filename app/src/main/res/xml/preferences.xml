@@ -3,24 +3,25 @@
 
     <EditTextPreference
         android:defaultValue="0"
+        android:icon="@drawable/ic_directions_walk_black_24dp"
+        android:inputType="number"
         android:key="@string/step_goal_pref"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Set daily goals"
         android:summary="0 steps"
-        android:inputType="number"
-        android:digits="0123456789" />
+        android:title="Set daily goals" />
 
     <ListPreference
-        android:defaultValue="Accelerometer"
+        android:defaultValue="1"
         android:entries="@array/sensor_list"
         android:entryValues="@array/sensor_list_values"
         android:key="@string/sensor_select_pref"
         android:summary="Currently using"
-        android:title="List preference" />
+        android:title="Sensor for step counting" />
 
     <Preference
         android:title="Logout"
+        android:icon="@drawable/ic_backspace_black_24dp"
         android:key="@string/logout_pref"
         android:summary="Currently logged in as "/>
 
