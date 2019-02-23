@@ -9,4 +9,17 @@
     <string name="register_title">Register</string>
     <string name="confirm_your_password">Confirm your password</string>
     <string name="new_to_sip">New to SIP?</string>
+
+    <string name="step_goal_pref">step_goal</string>
+    <string name="logout_pref">logout_pref_button</string>
+    <string name="sensor_select_pref">sensor_select</string>
+    <string-array name="sensor_list">
+        <item>Accelerometer (less accurate)</item>
+        <item>Pedometer (best)</item>
+    </string-array>
+    <string-array name="sensor_list_values">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
 </resources>

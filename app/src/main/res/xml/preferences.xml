@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="Default value"
+        android:key="@string/step_goal_pref"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Set daily goals"
+        android:summary="0 steps"
+        android:inputType="number"
+        android:digits="0123456789" />
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/sensor_list"
+        android:entryValues="@array/sensor_list_values"
+        android:key="list_preference_1"
+        android:summary="Currently using"
+        android:title="List preference" />
+
+    <Preference
+        android:title="Logout"
+        android:key="@string/logout_pref"
+        android:summary="Currently logged in as "/>
+
+</PreferenceScreen>
