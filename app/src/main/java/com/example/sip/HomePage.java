@@ -21,7 +21,9 @@ import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+
 public class HomePage extends AppCompatActivity implements StepCounter.OnFragmentInteractionListener {
+
     private FirebaseAuth authFirebase = FirebaseAuth.getInstance();
 
     @Override
@@ -66,11 +68,7 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_logout) {
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(HomePage.this, Login.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            Intent intent = new Intent(this, Settings.class);
             startActivity(intent);
             return true;
         }

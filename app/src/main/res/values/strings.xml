@@ -15,4 +15,17 @@
     <string name="start_step">Start</string>
     <string name="share_step">SHARE</string>
     <string name="history">HISTORY</string>
+    <string name="step_goal_pref">step_goal</string>
+    <string name="logout_pref">logout_pref_button</string>
+    <string name="sensor_select_pref">sensor_select</string>
+    <string-array name="sensor_list">
+        <item>Accelerometer (less accurate)</item>
+        <item>Pedometer (best)</item>
+    </string-array>
+    <string-array name="sensor_list_values">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+>>>>>>> e27ed38bb8bb4a4c911623c35ccd2f5ae72d8460
 </resources>
