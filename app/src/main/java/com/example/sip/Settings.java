@@ -1,8 +1,10 @@
 package com.example.sip;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.preference.EditTextPreference;
@@ -11,13 +13,13 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class Settings extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        SettingsFragment.username = intent.getStringExtra(HomePage.EXTRA_USERNAME);
 
         this.getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
@@ -26,7 +28,7 @@ public class Settings extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-        public static String username;
+        private FirebaseAuth authFirebase = FirebaseAuth.getInstance();
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
@@ -41,13 +43,33 @@ public class Settings extends AppCompatActivity {
             stepGoal.setSummary(steps + " steps");
             String sensor = sp.getString(sensorType.getKey(), "undefined");
             sensorType.setSummary("Currently using " + sensor);
-            logoutButton.setSummary("Currently logged in as " + username);
+            logoutButton.setSummary("Currently logged in as " + authFirebase.getCurrentUser().getEmail());
 
             // Logout button listener
             logoutButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Toast.makeText(preference.getContext(),"LOGOUT",Toast.LENGTH_SHORT).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle("Confirmation");
+                    builder.setMessage("Are you sure you want to logout?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            authFirebase.signOut();
+                            Intent intent = new Intent(getContext(), Login.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                     return true;
                 }
 
