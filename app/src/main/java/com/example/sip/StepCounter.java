@@ -1,14 +1,22 @@
 package com.example.sip;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import static android.support.v4.content.ContextCompat.getSystemService;
 
 
 /**
@@ -24,8 +32,6 @@ public class StepCounter extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    private Button shareButton;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -70,17 +76,33 @@ public class StepCounter extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View stepCounterView = inflater.inflate(R.layout.fragment_step_counter, container, false);
-        shareButton = stepCounterView.findViewById(R.id.shareBtn);
+        Button shareButton = stepCounterView.findViewById(R.id.shareBtn);
 
         // Set onclick listener on share button
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-                sendIntent.setType("text/plain");
-                startActivity(sendIntent);
+                LocationManager locationManager = (LocationManager) (getActivity().getSystemService(Context.LOCATION_SERVICE));
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED) {
+
+                    Log.d("[LOCATION]", "Failed to get permission");
+                    return;
+                }
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//                Double latitude = location.getLatitude();
+//                Double longitude = location.getLongitude();
+//
+//                String uri = "http://maps.google.com/maps?daddr=" + latitude + "," + longitude;
+//                Log.d("URI", uri);
+//                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+//                sharingIntent.setType("text/plain");
+//                String ShareSub = "Here is my location";
+//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, ShareSub);
+//                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, uri);
+//                startActivity(Intent.createChooser(sharingIntent, "Share via"));
             }
         });
         return stepCounterView;
