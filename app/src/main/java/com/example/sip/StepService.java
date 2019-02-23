@@ -5,11 +5,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -61,6 +63,20 @@ public class StepService extends Service implements StepCounterListener {
     public void start() {
         Notification notification = rebuildNotification();
         startForeground(FOREGROUND_SERVICE_ID, notification);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        int sensorType = Integer.parseInt(sp.getString(getString(R.string.sensor_select_pref),"0"));
+        switch (sensorType) {
+            case 1:
+                counter.useAccelerometer();
+                break;
+            case 2:
+                counter.useNativeStep();
+                break;
+            default:
+                // TO-DO : Error handling
+                counter.useAccelerometer();
+                break;
+        }
         counter.start();
         isServiceRunning = true;
     }
