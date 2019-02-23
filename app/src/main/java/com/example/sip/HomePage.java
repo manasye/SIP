@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,10 +41,14 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Start fragment step counter
         FragmentManager fm = getFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.add(R.id.layout_main, new StepCounter());
         fragmentTransaction.commit();
+
+        // Add onclick on share button
+
     }
 
     @Override

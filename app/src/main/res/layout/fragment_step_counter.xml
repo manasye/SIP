@@ -18,8 +18,8 @@
             android:layout_height="30dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="50dp"
             android:layout_marginEnd="30dp"
+            android:layout_marginBottom="50dp"
             android:contentDescription="@string/history"
             android:src="@drawable/history" />
 
@@ -47,25 +47,33 @@
 
         <Button
             android:id="@+id/startBtn"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
             android:layout_below="@+id/stepDesc"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dp"
             android:layout_marginBottom="30dp"
             android:background="@drawable/buttonshape"
+            android:drawableEnd="@android:drawable/ic_menu_myplaces"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="@string/start_step"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/colorPrimary"
             android:textSize="15sp" />
 
         <Button
             android:id="@+id/shareBtn"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
             android:layout_below="@+id/startBtn"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/buttonshape"
+            android:drawableEnd="@android:drawable/ic_menu_share"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="@string/share_step"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/colorPrimary"
             android:textSize="15sp" />
 
     </RelativeLayout>
