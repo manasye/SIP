@@ -100,17 +100,17 @@ public class Settings extends AppCompatActivity {
             Preference pref = findPreference(key);
             if (pref.getKey().equals(getString(R.string.step_goal_pref))) {
                 EditTextPreference etp = (EditTextPreference) pref;
-                String value = sp.getString(key,"0");
+                String value = sp.getString(key, "0");
                 etp.setSummary(value + " steps");
             } else if (pref.getKey().equals(getString(R.string.sensor_select_pref))) {
                 ListPreference lp = (ListPreference) pref;
-                String value = sp.getString(key,"-1");
+                String value = sp.getString(key, "-1");
                 lp.setSummary("Currently using " + getSensorDescription(Integer.parseInt(value)));
             }
         }
 
         public static String getSensorDescription(int sensorId) {
-            switch(sensorId) {
+            switch (sensorId) {
                 case 1:
                     return "Accelerometer";
                 case 2:

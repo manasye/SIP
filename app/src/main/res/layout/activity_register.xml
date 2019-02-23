@@ -9,11 +9,11 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:paddingLeft="20dp"
         android:paddingTop="75dp"
         android:paddingRight="20dp"
         android:paddingBottom="100dp"
-        android:background="#6cd6cd"
         tools:context=".Register">
 
         <TextView
@@ -23,12 +23,13 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:text="@string/register_title"
-            android:textSize="35sp" />
+            android:textColor="@color/colorGrey"
+            android:textSize="25sp" />
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="122dp"
-            android:layout_height="126dp"
+            android:layout_width="208dp"
+            android:layout_height="191dp"
             android:layout_below="@+id/loginView"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
@@ -46,6 +47,8 @@
             android:focusable="true"
             android:hint="@string/enter_name"
             android:inputType="text"
+            android:textColor="@color/colorGrey"
+            android:textColorHint="@color/colorGrey"
             tools:ignore="Autofill" />
 
         <EditText
@@ -58,6 +61,8 @@
             android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword"
+            android:textColor="@color/colorGrey"
+            android:textColorHint="@color/colorGrey"
             tools:ignore="Autofill" />
 
         <EditText
@@ -71,6 +76,8 @@
             android:ems="10"
             android:hint="@string/confirm_your_password"
             android:inputType="textPassword"
+            android:textColor="@color/colorGrey"
+            android:textColorHint="@color/colorGrey"
             tools:ignore="Autofill" />
 
         <TextView
@@ -80,15 +87,18 @@
             android:layout_below="@id/confPasswordField"
             android:layout_marginBottom="50dp"
             android:onClick="goToLogin"
-            android:text="@string/already_have_account" />
+            android:text="@string/already_have_account"
+            android:textColor="@color/colorGrey" />
 
         <Button
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:background="@drawable/buttonshape"
+            android:onClick="register"
             android:text="@string/register_title"
-            android:onClick="register"/>
+            android:textColor="@color/colorPrimary" />
 
     </RelativeLayout>
 </ScrollView>
