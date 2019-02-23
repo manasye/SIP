@@ -32,7 +32,7 @@ import static android.support.v4.content.ContextCompat.getSystemService;
  * Use the {@link StepCounter#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StepCounter extends Fragment implements StepCounterListener {
+public class StepCounter extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,8 +43,6 @@ public class StepCounter extends Fragment implements StepCounterListener {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-    private boolean isCounting;
-    private int stepCount;
     private TextView stepCountTextView;
     private com.example.sip.stepcounter.StepCounter counter;
 
@@ -87,10 +85,6 @@ public class StepCounter extends Fragment implements StepCounterListener {
         Button shareButton = stepCounterView.findViewById(R.id.shareBtn);
         final Button startButton = stepCounterView.findViewById(R.id.startBtn);
         stepCountTextView = (TextView) stepCounterView.findViewById(R.id.stepCount);
-
-        // Initialize step counter
-        counter = new com.example.sip.stepcounter.StepCounter(getContext());
-        counter.registerListener(this);
 
         // Set onclick listener on share button
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -146,15 +140,16 @@ public class StepCounter extends Fragment implements StepCounterListener {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isCounting) {
-                    counter.stop();
+                Intent intent = new Intent(getContext(), StepService.class);
+                if (StepService.isServiceRunning) {
+                    intent.setAction(StepService.STOP_SERVICE);
                     startButton.setText(getString(R.string.start_step));
                 } else {
                     stepCountTextView.setText(getString(R.string.default_step));
-                    counter.start();
+                    intent.setAction(StepService.START_SERVICE);
                     startButton.setText(getString(R.string.stop_step));
                 }
-                isCounting = !isCounting;
+                getContext().startService(intent);
             }
         });
 
@@ -184,11 +179,6 @@ public class StepCounter extends Fragment implements StepCounterListener {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onStepDetected(int stepCount) {
-        stepCountTextView.setText(Integer.toString(stepCount));
     }
 
     /**
