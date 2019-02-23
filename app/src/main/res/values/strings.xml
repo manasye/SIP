@@ -18,8 +18,8 @@
         <item>Pedometer (best)</item>
     </string-array>
     <string-array name="sensor_list_values">
-        <item>1</item>
-        <item>2</item>
+        <item>Accelerometer</item>
+        <item>Native Pedometer</item>
     </string-array>
 
 </resources>

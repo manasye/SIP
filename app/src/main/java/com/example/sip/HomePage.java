@@ -16,6 +16,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class HomePage extends AppCompatActivity {
+
+    public static final String EXTRA_USERNAME = "username";
+
     private FirebaseAuth authFirebase = FirebaseAuth.getInstance();
 
     @Override
@@ -62,6 +65,7 @@ public class HomePage extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, Settings.class);
+            intent.putExtra(EXTRA_USERNAME,authFirebase.getCurrentUser().getEmail());
             startActivity(intent);
             return true;
         }

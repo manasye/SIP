@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
-        android:defaultValue="Default value"
+        android:defaultValue="0"
         android:key="@string/step_goal_pref"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -12,10 +12,10 @@
         android:digits="0123456789" />
 
     <ListPreference
-        android:defaultValue="1"
+        android:defaultValue="Accelerometer"
         android:entries="@array/sensor_list"
         android:entryValues="@array/sensor_list_values"
-        android:key="list_preference_1"
+        android:key="@string/sensor_select_pref"
         android:summary="Currently using"
         android:title="List preference" />
 
