@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +69,6 @@ public class StepCounter extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
@@ -82,27 +82,49 @@ public class StepCounter extends Fragment {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LocationManager locationManager = (LocationManager) (getActivity().getSystemService(Context.LOCATION_SERVICE));
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
-                                != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1
+                    );
+                } else if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1
+                    );
+                } else {
+                    LocationManager locationManager = (LocationManager) (getActivity().getSystemService(Context.LOCATION_SERVICE));
+                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) !=
+                            PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                                    != PackageManager.PERMISSION_GRANTED) {
 
-                    Log.d("[LOCATION]", "Failed to get permission");
-                    return;
+                        Log.d("[LOCATION]", "Failed to get permission");
+                        return;
+                    }
+                    try {
+                        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (location != null) {
+                            Double latitude = location.getLatitude();
+                            Double longitude = location.getLongitude();
+                            String uri = "http://maps.google.com/maps?daddr=" + latitude + "," + longitude;
+                            Log.d("URI", uri);
+                            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            String ShareSub = "Here is my location";
+                            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, ShareSub);
+                            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, uri);
+                            startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                        } else {
+                            Log.d("[ERROR]", "Location manager could");
+                        }
+                    } catch (Exception e) {
+                        Log.d("[EXCEPTION]", "Location permission failed");
+                        e.printStackTrace();
+                    }
                 }
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                Double latitude = location.getLatitude();
-                Double longitude = location.getLongitude();
-
-                String uri = "http://maps.google.com/maps?daddr=" + latitude + "," + longitude;
-                Log.d("URI", uri);
-//                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-//                sharingIntent.setType("text/plain");
-//                String ShareSub = "Here is my location";
-//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, ShareSub);
-//                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, uri);
-//                startActivity(Intent.createChooser(sharingIntent, "Share via"));
             }
         });
         return stepCounterView;
