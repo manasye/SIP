@@ -4,6 +4,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -50,13 +52,18 @@ public class NotificationService extends FirebaseMessagingService {
         builder.setAutoCancel(true);
 
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         /* For Oreo and above : need to create a notification channel first */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel nc = new NotificationChannel(CHANNEL_ID, "S.I.P. Notification Channel", NotificationManager.IMPORTANCE_DEFAULT);
             nm.createNotificationChannel(nc);
+            v.vibrate(VibrationEffect.createOneShot(200,VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(200);
         }
 
         nm.notify(0, builder.build());
+
     }
 }
