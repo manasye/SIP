@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +18,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class Settings extends AppCompatActivity {
 
@@ -108,13 +112,21 @@ public class Settings extends AppCompatActivity {
             // Backing up preferences to Firebase
             if (somethingChanged) {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference ref = database.getReference("users").child(authFirebase.getCurrentUser().getUid()).child("preferences");
+                DatabaseReference ref = database.getReference("users").child(authFirebase.getCurrentUser().getUid());
+                DatabaseReference pref = ref.child("preferences");
 
                 int dailyGoal = Integer.parseInt(sp.getString(getString(R.string.step_goal_pref),"0"));
                 int sensorType = Integer.parseInt(sp.getString(getString(R.string.sensor_select_pref), "1"));
 
-                ref.child("dailyGoal").setValue(dailyGoal);
-                ref.child("sensorType").setValue(sensorType);
+                pref.child("dailyGoal").setValue(dailyGoal);
+                pref.child("sensorType").setValue(sensorType);
+
+                // Also updates today's stepdata target
+                String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+                ref.child("stepdata").child(date).child("target").setValue(dailyGoal);
+
+                Intent intent = new Intent(History.HISTORY_REFRESH_EVENT);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
             }
         }
 
