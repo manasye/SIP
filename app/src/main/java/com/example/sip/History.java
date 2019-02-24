@@ -8,20 +8,28 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.LinkedList;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import static android.app.Notification.EXTRA_MESSAGES;
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
+import java.util.ArrayList;
+import java.util.List;
 
 public class History extends Fragment {
     private RecyclerView recyclerView;
-    private final LinkedList<String> historyList = new LinkedList<>();
-//    String[] strings = {"Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8"};
+    private List<HistoryModel> historyContent = new ArrayList<>();
+    private RVAdapter adapter;
+
     public History() {
 
     }
@@ -29,25 +37,54 @@ public class History extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        for (int i = 0; i < 15; i++){
-            historyList.add("Hello " + i);
-        }
-
         View rootView = inflater.inflate(R.layout.fragment_history,null);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        adapter = new RVAdapter(getActivity(), historyContent);
 
-//        RecyclerView recyclerView = new RecyclerView(getContext());
-//        recyclerView.addItemDecoration(new Divider(getContext()));
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("stepdata");
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot elm : dataSnapshot.getChildren()) {
+                    String date = elm.getKey();
+                    int stepCount, target;
+
+                    try {
+                        stepCount = elm.child("count").getValue(Integer.class);
+                    } catch (NullPointerException npe) {
+                        stepCount = 0;
+                    }
+                    try {
+                        target = elm.child("target").getValue(Integer.class);
+                    } catch (NullPointerException npe) {
+                        target = 0;
+                    }
+
+                    historyContent.add(new HistoryModel(date,stepCount,target));
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new RVAdapter(getActivity(), historyList));
-//        return recyclerView;
+        recyclerView.setAdapter(adapter);
+
         return rootView;
     }
 
     public class RVAdapter extends RecyclerView.Adapter<RVAdapter.HistoryViewHolder> {
-        private LinkedList<String> dataSource;
+
+        private List<HistoryModel> dataSource;
         private Context c;
-        public RVAdapter(Context c, LinkedList<String> dataArgs) {
+
+        public RVAdapter(Context c, List<HistoryModel> dataArgs) {
             this.c = c;
             this.dataSource = dataArgs;
         }
@@ -62,7 +99,15 @@ public class History extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull HistoryViewHolder historyViewHolder, int position) {
-            historyViewHolder.textView.setText(dataSource.get(position));
+            HistoryModel current = dataSource.get(position);
+            String stepText = Integer.toString(current.stepCount) + " steps";
+            historyViewHolder.dateView.setText(current.date);
+            historyViewHolder.stepView.setText(stepText);
+            if ((current.target > 0) && (current.stepCount >= current.target)) {
+                historyViewHolder.goalReachedIcon.setVisibility(ImageView.VISIBLE);
+            } else {
+                historyViewHolder.goalReachedIcon.setVisibility(ImageView.GONE);
+            }
         }
 
         @Override
@@ -71,11 +116,17 @@ public class History extends Fragment {
         }
 
         public class HistoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            public TextView textView;
+
+            public TextView dateView;
+            public TextView stepView;
+            public ImageView goalReachedIcon;
 
             public HistoryViewHolder(@NonNull View itemView) {
                 super(itemView);
-                textView = (TextView) itemView.findViewById(R.id.word);
+                dateView = (TextView) itemView.findViewById(R.id.date);
+                stepView = (TextView) itemView.findViewById(R.id.steps);
+                goalReachedIcon = (ImageView) itemView.findViewById(R.id.goal_reached);
+
                 itemView.setOnClickListener(this);
             }
 
@@ -83,12 +134,12 @@ public class History extends Fragment {
             public void onClick(View view) {
                 goToHistoryContent();
             }
-
-            private void goToHistoryContent() {
-                Intent intent = new Intent(History.this.getActivity(), HistoryContent.class);
-                intent.putExtra("message", dataSource.get(getAdapterPosition()));
-                startActivity(intent);
-            }
         }
     }
+
+    private void goToHistoryContent() {
+        startActivity(new Intent(History.this.getActivity(), HistoryContent.class));
+    }
+
+
 }
