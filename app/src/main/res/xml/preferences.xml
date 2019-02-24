@@ -20,6 +20,12 @@
         android:title="Sensor for step counting" />
 
     <Preference
+        android:title="Connect to Nano S.I.P."
+        android:icon="@drawable/ic_watch_black_24dp"
+        android:key="@string/integrate_pref"
+        android:summary="Coming soon..."/>
+
+    <Preference
         android:title="Logout"
         android:icon="@drawable/ic_backspace_black_24dp"
         android:key="@string/logout_pref"

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -56,6 +57,7 @@ public class Settings extends AppCompatActivity {
             setPreferencesFromResource(R.xml.preferences, s);
             EditTextPreference stepGoal = (EditTextPreference) findPreference(getString(R.string.step_goal_pref));
             ListPreference sensorType = (ListPreference) findPreference(getString(R.string.sensor_select_pref));
+            Preference connectButton = findPreference(getString(R.string.integrate_pref));
             Preference logoutButton = findPreference(getString(R.string.logout_pref));
             sp = PreferenceManager.getDefaultSharedPreferences(this.getContext());
 
@@ -65,6 +67,15 @@ public class Settings extends AppCompatActivity {
             String sensor = sp.getString(sensorType.getKey(), "undefined");
             sensorType.setSummary("Currently using " + getSensorDescription(Integer.parseInt(sensor)));
             logoutButton.setSummary("Currently logged in as " + authFirebase.getCurrentUser().getEmail());
+
+            // Connect button listener
+            connectButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Toast.makeText(getContext(),"COMING SOON...",Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
 
             // Logout button listener
             logoutButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
