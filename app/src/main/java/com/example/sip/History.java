@@ -1,6 +1,7 @@
 package com.example.sip;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -59,13 +60,23 @@ public class History extends Fragment {
             return dataSource.length;
         }
 
-        public class HistoryViewHolder extends RecyclerView.ViewHolder {
+        public class HistoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             public TextView textView;
 
             public HistoryViewHolder(@NonNull View itemView) {
                 super(itemView);
                 textView = (TextView) itemView.findViewById(R.id.word);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+                goToHistoryContent();
             }
         }
+    }
+
+    private void goToHistoryContent() {
+        startActivity(new Intent(History.this.getActivity(), HistoryContent.class));
     }
 }
