@@ -65,7 +65,7 @@ public class History extends Fragment {
 
             public HistoryViewHolder(@NonNull View itemView) {
                 super(itemView);
-                textView = (TextView) itemView.findViewById(R.id.word);
+                textView = (TextView) itemView.findViewById(R.id.date);
                 itemView.setOnClickListener(this);
             }
 
