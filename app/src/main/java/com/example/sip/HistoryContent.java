@@ -33,6 +33,7 @@ public class HistoryContent extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         HistoryModel model = bundle.getParcelable("data");
 //
+
         TextView dateTextView = findViewById(R.id.date_content);
         dateTextView.setText(model.getDate());
 
