@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 public class HistoryContent extends AppCompatActivity {
 
@@ -29,6 +30,14 @@ public class HistoryContent extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
+        Bundle bundle = getIntent().getExtras();
+        HistoryModel model = bundle.getParcelable("data");
+//
+        TextView stepTextView = findViewById(R.id.step_count_content);
+        stepTextView.setText(model.getDate());
+
+        TextView dateTextView = findViewById(R.id.date_content);
+        dateTextView.setText(String.valueOf(model.getStepCount()));
     }
 
     @Override
