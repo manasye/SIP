@@ -93,6 +93,7 @@ public class Settings extends AppCompatActivity {
         public void onDestroyView() {
             super.onDestroyView();
             getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+
         }
 
         /* If the user changed a setting value, the summary will be updated to reflect the changes */
