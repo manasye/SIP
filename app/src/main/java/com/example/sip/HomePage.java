@@ -115,4 +115,6 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+
 }

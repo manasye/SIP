@@ -17,6 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.support.v4.app.Fragment;
+import android.widget.TextView;
+
+import com.example.sip.stepcounter.StepCounterListener;
 
 import static android.support.v4.content.ContextCompat.getSystemService;
 
@@ -40,6 +43,9 @@ public class StepCounter extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private Button startButton;
+    private TextView stepCountTextView;
+    private int stepCount;
 
     public StepCounter() {
         // Required empty public constructor
@@ -78,6 +84,8 @@ public class StepCounter extends Fragment {
         // Inflate the layout for this fragment
         View stepCounterView = inflater.inflate(R.layout.fragment_step_counter, container, false);
         Button shareButton = stepCounterView.findViewById(R.id.shareBtn);
+        startButton = stepCounterView.findViewById(R.id.startBtn);
+        stepCountTextView = (TextView) stepCounterView.findViewById(R.id.stepCount);
 
         // Set onclick listener on share button
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +136,29 @@ public class StepCounter extends Fragment {
                 }
             }
         });
+
+        // Start button on click listener
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), StepService.class);
+                if (StepService.isServiceRunning) {
+                    intent.setAction(StepService.STOP_SERVICE);
+                    detachServiceListener();
+                    startButton.setText(getString(R.string.start_step));
+                } else {
+                    stepCountTextView.setText(getString(R.string.default_step));
+                    intent.setAction(StepService.START_SERVICE);
+                    stepCountTextView.setText(getString(R.string.default_step));
+                    stepCount = 0;
+                    attachServiceListener();
+                    startButton.setText(getString(R.string.stop_step));
+                }
+                getContext().startService(intent);
+            }
+        });
+
+
         return stepCounterView;
     }
 
@@ -168,5 +199,35 @@ public class StepCounter extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void onStepDetected(int stepCount) {
+        this.stepCount = stepCount;
+        stepCountTextView.setText(Integer.toString(this.stepCount));
+    }
+
+    private void attachServiceListener() {
+        StepService.callback = this;
+    }
+
+    private void detachServiceListener() {
+        StepService.callback = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (StepService.isServiceRunning) {
+            attachServiceListener();
+            startButton.setText(getString(R.string.stop_step));
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (StepService.isServiceRunning) {
+            detachServiceListener();
+        }
     }
 }
