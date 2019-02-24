@@ -8,4 +8,9 @@
     tools:context=".HistoryContent"
     tools:showIn="@layout/activity_history_content">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/content_history"/>
+
 </android.support.constraint.ConstraintLayout>
