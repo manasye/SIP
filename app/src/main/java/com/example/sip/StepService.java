@@ -17,6 +17,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.sip.stepcounter.StepCounter;
@@ -146,6 +147,9 @@ public class StepService extends Service implements StepCounterListener {
                 }
                 count += currentStepCount;
                 prevData.child("count").setValue(count);
+
+                Intent intent = new Intent(History.HISTORY_REFRESH_EVENT);
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
             }
 
             @Override

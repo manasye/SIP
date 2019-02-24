@@ -1,11 +1,14 @@
 package com.example.sip;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,23 +30,25 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class History extends Fragment {
+    public static final String HISTORY_REFRESH_EVENT = "history-refresh";
     private RecyclerView recyclerView;
     private List<HistoryModel> historyContent = new ArrayList<>();
     private RVAdapter adapter;
+    private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateHistoryList();
+        }
+    };
 
     public History() {
 
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_history,null);
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        adapter = new RVAdapter(getActivity(), historyContent);
-
+    public void updateHistoryList() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("stepdata");
+        historyContent.clear();
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -65,7 +70,9 @@ public class History extends Fragment {
 
                     historyContent.add(new HistoryModel(date,stepCount,target));
                 }
-                adapter.notifyDataSetChanged();
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -73,11 +80,30 @@ public class History extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_history,null);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        adapter = new RVAdapter(getActivity(), historyContent);
+
+        updateHistoryList();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(msgReceiver,
+                new IntentFilter(HISTORY_REFRESH_EVENT));
+
         return rootView;
+    }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(msgReceiver);
+        super.onPause();
     }
 
     public class RVAdapter extends RecyclerView.Adapter<RVAdapter.HistoryViewHolder> {
