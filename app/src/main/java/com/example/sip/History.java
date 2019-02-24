@@ -134,12 +134,12 @@ public class History extends Fragment {
             public void onClick(View view) {
                 goToHistoryContent();
             }
+
+            private void goToHistoryContent() {
+                Intent intent = new Intent(History.this.getActivity(), HistoryContent.class);
+                startActivity(intent);
+            }
         }
     }
-
-    private void goToHistoryContent() {
-        startActivity(new Intent(History.this.getActivity(), HistoryContent.class));
-    }
-
 
 }
