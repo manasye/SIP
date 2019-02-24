@@ -33,11 +33,12 @@ public class HistoryContent extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         HistoryModel model = bundle.getParcelable("data");
 //
-        TextView stepTextView = findViewById(R.id.step_count_content);
-        stepTextView.setText(model.getDate());
 
         TextView dateTextView = findViewById(R.id.date_content);
-        dateTextView.setText(String.valueOf(model.getStepCount()));
+        dateTextView.setText(model.getDate());
+
+        TextView stepCounterTextView = findViewById(R.id.step_count_content);
+        stepCounterTextView.setText(String.valueOf(model.getStepCount()));
     }
 
     @Override
