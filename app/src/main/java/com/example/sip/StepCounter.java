@@ -2,6 +2,7 @@ package com.example.sip;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,12 +113,29 @@ public class StepCounter extends Fragment {
                     detachServiceListener();
                     startButton.setText(getString(R.string.start_step));
                 } else {
-                    stepCountTextView.setText(getString(R.string.default_step));
-                    intent.setAction(StepService.START_SERVICE);
-                    stepCountTextView.setText(getString(R.string.default_step));
-                    stepCount = 0;
-                    attachServiceListener();
-                    startButton.setText(getString(R.string.stop_step));
+                    com.example.sip.stepcounter.StepCounter temp = new com.example.sip.stepcounter.StepCounter(getContext());
+                    if (!temp.isAccelAvailable() && !temp.isNativeStepAvailable()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setCancelable(true);
+                        builder.setTitle("Error");
+                        builder.setMessage("There is no suitable sensor for your device!");
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        stepCountTextView.setText(getString(R.string.default_step));
+                        intent.setAction(StepService.START_SERVICE);
+                        stepCountTextView.setText(getString(R.string.default_step));
+                        stepCount = 0;
+                        attachServiceListener();
+                        startButton.setText(getString(R.string.stop_step));
+                    }
+
                 }
                 getContext().startService(intent);
             }

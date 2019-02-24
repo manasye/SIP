@@ -13,6 +13,7 @@ import android.support.v7.preference.Preference;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.sip.stepcounter.StepCounter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -67,6 +68,13 @@ public class Settings extends AppCompatActivity {
             String sensor = sp.getString(sensorType.getKey(), "undefined");
             sensorType.setSummary("Currently using " + getSensorDescription(Integer.parseInt(sensor)));
             logoutButton.setSummary("Currently logged in as " + authFirebase.getCurrentUser().getEmail());
+
+            // Disable sensor choice if no sensor cannot be found
+            com.example.sip.stepcounter.StepCounter temp = new com.example.sip.stepcounter.StepCounter(getContext());
+            if (!temp.isAccelAvailable() && !temp.isNativeStepAvailable()) {
+                sensorType.setEnabled(false);
+                sensorType.setSummary("No suitable sensor found on your device");
+            }
 
             // Connect button listener
             connectButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -152,6 +160,16 @@ public class Settings extends AppCompatActivity {
             } else if (pref.getKey().equals(getString(R.string.sensor_select_pref))) {
                 ListPreference lp = (ListPreference) pref;
                 String value = sp.getString(key, "-1");
+                if (value.equals("2")) {
+                    StepCounter temp = new StepCounter(getContext());
+                    if (!temp.isNativeStepAvailable()) {
+                        value = "1";
+                        Toast.makeText(getContext(),"That sensor is not available on this device!",Toast.LENGTH_SHORT).show();
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString(key,value);
+                        editor.apply();
+                    }
+                }
                 lp.setSummary("Currently using " + getSensorDescription(Integer.parseInt(value)));
                 somethingChanged = true;
             }
