@@ -17,6 +17,7 @@
     <string name="share_step">SHARE</string>
     <string name="history">HISTORY</string>
     <string name="step_goal_pref">step_goal</string>
+    <string name="integrate_pref">integrate_sip</string>
     <string name="logout_pref">logout_pref_button</string>
     <string name="sensor_select_pref">sensor_select</string>
     <string-array name="sensor_list">
