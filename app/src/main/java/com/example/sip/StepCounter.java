@@ -157,7 +157,7 @@ public class StepCounter extends Fragment {
         heartImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Toast.makeText(getContext(), "Coming soon...", Toast.LENGTH_SHORT).show();
             }
         });
 
