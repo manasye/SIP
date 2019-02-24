@@ -13,21 +13,21 @@
         tools:context=".StepCounter">
 
         <ImageView
-            android:id="@+id/historyImg"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:id="@+id/heartImg"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
-            android:contentDescription="@string/history"
-            android:src="@drawable/history" />
+            android:contentDescription="@string/heart"
+            android:src="@drawable/heart" />
 
         <TextView
             android:id="@+id/stepCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/historyImg"
+            android:layout_below="@+id/heartImg"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="@string/default_step"

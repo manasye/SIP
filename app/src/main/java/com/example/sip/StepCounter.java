@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 //import android.app.Fragment;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,12 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.support.v4.app.Fragment;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sip.stepcounter.StepCounterListener;
-
-import static android.support.v4.content.ContextCompat.getSystemService;
+import java.util.Objects;
 
 
 /**
@@ -87,6 +87,7 @@ public class StepCounter extends Fragment {
         // Inflate the layout for this fragment
         View stepCounterView = inflater.inflate(R.layout.fragment_step_counter, container, false);
         Button shareButton = stepCounterView.findViewById(R.id.shareBtn);
+        ImageView heartImg = stepCounterView.findViewById(R.id.heartImg);
         startButton = stepCounterView.findViewById(R.id.startBtn);
         stepCountTextView = stepCounterView.findViewById(R.id.stepCount);
 
@@ -95,24 +96,24 @@ public class StepCounter extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.P)
             @Override
             public void onClick(View v) {
-                // Ask for Foreground Service if not yet granted
-                if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.FOREGROUND_SERVICE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{Manifest.permission.FOREGROUND_SERVICE}, 1
-                    );
-
-                }
-                // Ask for Vibrate if not yet granted
-                if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.VIBRATE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{Manifest.permission.VIBRATE}, 2
-                    );
-
-                }
+//                // Ask for Foreground Service if not yet granted
+//                if (ContextCompat.checkSelfPermission(getActivity(),
+//                        Manifest.permission.FOREGROUND_SERVICE)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(getActivity(),
+//                            new String[]{Manifest.permission.FOREGROUND_SERVICE}, 1
+//                    );
+//
+//                }
+//                // Ask for Vibrate if not yet granted
+//                if (ContextCompat.checkSelfPermission(getActivity(),
+//                        Manifest.permission.VIBRATE)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(getActivity(),
+//                            new String[]{Manifest.permission.VIBRATE}, 2
+//                    );
+//
+//                }
 
                 // Granted
                 Intent intent = new Intent(getContext(), StepService.class);
@@ -153,11 +154,19 @@ public class StepCounter extends Fragment {
 
         });
 
+        heartImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         return stepCounterView;
     }
 
     private void shareLoc() {
-        LocationManager locationManager = (LocationManager) (getActivity().getSystemService(Context.LOCATION_SERVICE));
+        LocationManager locationManager = (LocationManager) (Objects.requireNonNull(getActivity()).
+                getSystemService(Context.LOCATION_SERVICE));
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -189,8 +198,7 @@ public class StepCounter extends Fragment {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case 4: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
