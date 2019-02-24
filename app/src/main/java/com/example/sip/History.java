@@ -13,9 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.LinkedList;
+
+import static android.app.Notification.EXTRA_MESSAGES;
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 public class History extends Fragment {
     private RecyclerView recyclerView;
-    String[] strings = {"Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8"};
+    private final LinkedList<String> historyList = new LinkedList<>();
+//    String[] strings = {"Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8"};
     public History() {
 
     }
@@ -23,21 +29,25 @@ public class History extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        for (int i = 0; i < 15; i++){
+            historyList.add("Hello " + i);
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_history,null);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
 //        RecyclerView recyclerView = new RecyclerView(getContext());
 //        recyclerView.addItemDecoration(new Divider(getContext()));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new RVAdapter(getActivity(), strings));
+        recyclerView.setAdapter(new RVAdapter(getActivity(), historyList));
 //        return recyclerView;
         return rootView;
     }
 
     public class RVAdapter extends RecyclerView.Adapter<RVAdapter.HistoryViewHolder> {
-        private String[] dataSource;
+        private LinkedList<String> dataSource;
         private Context c;
-        public RVAdapter(Context c, String[] dataArgs) {
+        public RVAdapter(Context c, LinkedList<String> dataArgs) {
             this.c = c;
             this.dataSource = dataArgs;
         }
@@ -52,12 +62,12 @@ public class History extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull HistoryViewHolder historyViewHolder, int position) {
-            historyViewHolder.textView.setText(dataSource[position]);
+            historyViewHolder.textView.setText(dataSource.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return dataSource.length;
+            return dataSource.size();
         }
 
         public class HistoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -73,10 +83,12 @@ public class History extends Fragment {
             public void onClick(View view) {
                 goToHistoryContent();
             }
-        }
-    }
 
-    private void goToHistoryContent() {
-        startActivity(new Intent(History.this.getActivity(), HistoryContent.class));
+            private void goToHistoryContent() {
+                Intent intent = new Intent(History.this.getActivity(), HistoryContent.class);
+                intent.putExtra("message", dataSource.get(getAdapterPosition()));
+                startActivity(intent);
+            }
+        }
     }
 }
