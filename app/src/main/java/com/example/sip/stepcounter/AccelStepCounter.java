@@ -67,4 +67,7 @@ public class AccelStepCounter implements StepProcessor {
 
         return tempCount;
     }
+
+    @Override
+    public void refresh() {}
 }
