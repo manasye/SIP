@@ -1,11 +1,13 @@
 package com.example.sip;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -46,6 +48,7 @@ public class StepService extends Service implements StepCounterListener {
 
     private int currentStepCount;
     private StepCounter counter;
+    private NotificationManager nm;
 
     @Nullable
     @Override
@@ -59,6 +62,13 @@ public class StepService extends Service implements StepCounterListener {
         currentStepCount = 0;
         counter = new StepCounter(this);
         counter.registerListener(this);
+
+        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel nc = new NotificationChannel(NOTIF_CHANNEL, "S.I.P. Notification Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            nm.createNotificationChannel(nc);
+        }
     }
 
     @Override
@@ -79,6 +89,7 @@ public class StepService extends Service implements StepCounterListener {
     public void start() {
         Notification notification = rebuildNotification();
         startForeground(FOREGROUND_SERVICE_ID, notification);
+
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         int sensorType = Integer.parseInt(sp.getString(getString(R.string.sensor_select_pref),"0"));
         switch (sensorType) {
@@ -171,7 +182,7 @@ public class StepService extends Service implements StepCounterListener {
     public void onStepDetected(int stepCount) {
         currentStepCount = stepCount;
         Log.d("[FORGNDSRV]","step detected!");
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
         Notification notification = rebuildNotification();
         nm.notify(FOREGROUND_SERVICE_ID, notification);
         if (callback != null) {
