@@ -12,6 +12,9 @@ import android.support.v7.preference.Preference;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
@@ -40,6 +43,9 @@ public class Settings extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         private FirebaseAuth authFirebase = FirebaseAuth.getInstance();
+        private boolean somethingChanged;
+        private SharedPreferences sp;
+
 
         @Override
         public void onCreatePreferencesFix(Bundle bundle, String s) {
@@ -47,9 +53,9 @@ public class Settings extends AppCompatActivity {
             EditTextPreference stepGoal = (EditTextPreference) findPreference(getString(R.string.step_goal_pref));
             ListPreference sensorType = (ListPreference) findPreference(getString(R.string.sensor_select_pref));
             Preference logoutButton = findPreference(getString(R.string.logout_pref));
+            sp = PreferenceManager.getDefaultSharedPreferences(this.getContext());
 
             // Loads previously saved values
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.getContext());
             String steps = sp.getString(stepGoal.getKey(), "0");
             stepGoal.setSummary(steps + " steps");
             String sensor = sp.getString(sensorType.getKey(), "undefined");
@@ -95,22 +101,41 @@ public class Settings extends AppCompatActivity {
             getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         }
 
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+
+            // Backing up preferences to Firebase
+            if (somethingChanged) {
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference ref = database.getReference("users").child(authFirebase.getCurrentUser().getUid()).child("preferences");
+
+                int dailyGoal = Integer.parseInt(sp.getString(getString(R.string.step_goal_pref),"0"));
+                int sensorType = Integer.parseInt(sp.getString(getString(R.string.sensor_select_pref), "1"));
+
+                ref.child("dailyGoal").setValue(dailyGoal);
+                ref.child("sensorType").setValue(sensorType);
+            }
+        }
+
         /* If the user changed a setting value, the summary will be updated to reflect the changes */
         public void onSharedPreferenceChanged(SharedPreferences sp, String key) {
             Preference pref = findPreference(key);
             if (pref.getKey().equals(getString(R.string.step_goal_pref))) {
                 EditTextPreference etp = (EditTextPreference) pref;
-                String value = sp.getString(key,"0");
+                String value = sp.getString(key, "0");
                 etp.setSummary(value + " steps");
+                somethingChanged = true;
             } else if (pref.getKey().equals(getString(R.string.sensor_select_pref))) {
                 ListPreference lp = (ListPreference) pref;
-                String value = sp.getString(key,"-1");
+                String value = sp.getString(key, "-1");
                 lp.setSummary("Currently using " + getSensorDescription(Integer.parseInt(value)));
+                somethingChanged = true;
             }
         }
 
         public static String getSensorDescription(int sensorId) {
-            switch(sensorId) {
+            switch (sensorId) {
                 case 1:
                     return "Accelerometer";
                 case 2:

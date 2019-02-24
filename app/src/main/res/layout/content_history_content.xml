@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".HistoryContent"
+    tools:showIn="@layout/activity_history_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:id="@+id/date"
+            android:text="Date"
+            android:padding="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5px"
+            android:background="@drawable/separator_line"
+            android:layout_below="@id/date"
+            android:id="@+id/line_date"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/date_content"
+            android:layout_below="@id/line_date"
+            android:textSize="15sp"
+            android:gravity="left"
+            android:padding="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/step_count"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_below="@id/date_content"
+            android:text="Step Count"
+            android:padding="8dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5px"
+            android:background="@drawable/separator_line"
+            android:layout_below="@id/step_count"
+            android:id="@+id/line_step_count"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/step_count_content"
+            android:layout_below="@id/line_step_count"
+            android:textSize="15sp"
+            android:layout_alignParentLeft="true"
+            android:padding="8dp"/>
+
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
