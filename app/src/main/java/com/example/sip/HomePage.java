@@ -40,8 +40,6 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
             startActivity(new Intent(HomePage.this, Login.class));
         }
 
-        // When logged in, get all data
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,13 +70,6 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
-        // Start fragment step counter
-//        StepCounter stepCounter = new StepCounter();
-//        FragmentManager fm = getFragmentManager();
-//        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-//        fragmentTransaction.add(R.id.layout_main, stepCounter);
-//        fragmentTransaction.commit();
-
     }
 
     @Override
@@ -110,11 +101,5 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
     public void onBackPressed() {
         moveTaskToBack(true);
     }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
 
 }
