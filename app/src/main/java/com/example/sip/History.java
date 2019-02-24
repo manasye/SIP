@@ -1,6 +1,7 @@
 package com.example.sip;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,16 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link History.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link History#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class History extends Fragment {
+    private RecyclerView recyclerView;
     String[] strings = {"Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8", "Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "Hello8"};
     public History() {
 
@@ -30,22 +23,29 @@ public class History extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RecyclerView recyclerView = new RecyclerView(getContext());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new RVAdapter(strings));
-        return recyclerView;
+        View rootView = inflater.inflate(R.layout.fragment_history,null);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+
+//        RecyclerView recyclerView = new RecyclerView(getContext());
+//        recyclerView.addItemDecoration(new Divider(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(new RVAdapter(getActivity(), strings));
+//        return recyclerView;
+        return rootView;
     }
 
-    public class RVAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
+    public class RVAdapter extends RecyclerView.Adapter<RVAdapter.HistoryViewHolder> {
         private String[] dataSource;
-        public RVAdapter(String[] dataArgs) {
+        private Context c;
+        public RVAdapter(Context c, String[] dataArgs) {
+            this.c = c;
             this.dataSource = dataArgs;
         }
 
         @NonNull
         @Override
         public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = new TextView(parent.getContext());
+            View view = LayoutInflater.from(c).inflate(R.layout.history_items, parent, false);
             HistoryViewHolder viewHolder = new HistoryViewHolder(view);
             return viewHolder;
         }
@@ -59,14 +59,24 @@ public class History extends Fragment {
         public int getItemCount() {
             return dataSource.length;
         }
+
+        public class HistoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            public TextView textView;
+
+            public HistoryViewHolder(@NonNull View itemView) {
+                super(itemView);
+                textView = (TextView) itemView.findViewById(R.id.word);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+                goToHistoryContent();
+            }
+        }
     }
 
-    public static class HistoryViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-
-        public HistoryViewHolder(@NonNull View itemView) {
-            super(itemView);
-            textView = (TextView) itemView;
-        }
+    private void goToHistoryContent() {
+        startActivity(new Intent(History.this.getActivity(), HistoryContent.class));
     }
 }
