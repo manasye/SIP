@@ -24,6 +24,8 @@ import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 
 public class HomePage extends AppCompatActivity implements StepCounter.OnFragmentInteractionListener {
 
@@ -46,8 +48,8 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
 
         TabLayout tabLayout = findViewById(R.id.sliding_tabs);
         // Set the text for each tab.
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_homepage));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_history));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.home));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.history));
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
