@@ -13,6 +13,7 @@
 
     <ListPreference
         android:defaultValue="1"
+        android:icon="@drawable/sensor"
         android:entries="@array/sensor_list"
         android:entryValues="@array/sensor_list_values"
         android:key="@string/sensor_select_pref"

@@ -4,14 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +23,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormatSymbols;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class History extends Fragment {
     public static final String HISTORY_REFRESH_EVENT = "history-refresh";
-    private RecyclerView recyclerView;
     private List<HistoryModel> historyContent = new ArrayList<>();
     private RVAdapter adapter;
     private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
@@ -68,7 +67,7 @@ public class History extends Fragment {
                         target = 0;
                     }
 
-                    historyContent.add(new HistoryModel(date,stepCount,target));
+                    historyContent.add(new HistoryModel(date, stepCount, target));
                 }
                 if (adapter != null) {
                     adapter.notifyDataSetChanged();
@@ -85,8 +84,8 @@ public class History extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_history,null);
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        View rootView = inflater.inflate(R.layout.fragment_history, null);
+        RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view);
         adapter = new RVAdapter(getActivity(), historyContent);
 
         updateHistoryList();
@@ -94,7 +93,7 @@ public class History extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(msgReceiver,
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).registerReceiver(msgReceiver,
                 new IntentFilter(HISTORY_REFRESH_EVENT));
 
         return rootView;
@@ -102,7 +101,7 @@ public class History extends Fragment {
 
     @Override
     public void onPause() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(msgReceiver);
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).unregisterReceiver(msgReceiver);
         super.onPause();
     }
 
@@ -111,7 +110,7 @@ public class History extends Fragment {
         private List<HistoryModel> dataSource;
         private Context c;
 
-        public RVAdapter(Context c, List<HistoryModel> dataArgs) {
+        RVAdapter(Context c, List<HistoryModel> dataArgs) {
             this.c = c;
             this.dataSource = dataArgs;
         }
@@ -120,21 +119,27 @@ public class History extends Fragment {
         @Override
         public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(c).inflate(R.layout.history_items, parent, false);
-            HistoryViewHolder viewHolder = new HistoryViewHolder(view);
-            return viewHolder;
+            return new HistoryViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull HistoryViewHolder historyViewHolder, int position) {
             HistoryModel current = dataSource.get(position);
             String stepText = Integer.toString(current.stepCount) + " steps";
-            historyViewHolder.dateView.setText(current.date);
+            historyViewHolder.dateView.setText(formatDate(current.date));
             historyViewHolder.stepView.setText(stepText);
             if ((current.target > 0) && (current.stepCount >= current.target)) {
                 historyViewHolder.goalReachedIcon.setVisibility(ImageView.VISIBLE);
             } else {
-                historyViewHolder.goalReachedIcon.setVisibility(ImageView.GONE);
+                historyViewHolder.goalReachedIcon.setImageResource(R.drawable.wrong);
             }
+        }
+
+        String formatDate(String date) {
+            String[] splittedDate = date.split("-");
+            return splittedDate[0] + " " +
+                    new DateFormatSymbols().getMonths()[Integer.parseInt(splittedDate[1]) - 1]
+                    + " " + splittedDate[2];
         }
 
         @Override
@@ -144,15 +149,15 @@ public class History extends Fragment {
 
         public class HistoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-            public TextView dateView;
-            public TextView stepView;
-            public ImageView goalReachedIcon;
+            TextView dateView;
+            TextView stepView;
+            ImageView goalReachedIcon;
 
-            public HistoryViewHolder(@NonNull View itemView) {
+            HistoryViewHolder(@NonNull View itemView) {
                 super(itemView);
-                dateView = (TextView) itemView.findViewById(R.id.date);
-                stepView = (TextView) itemView.findViewById(R.id.steps);
-                goalReachedIcon = (ImageView) itemView.findViewById(R.id.goal_reached);
+                dateView = itemView.findViewById(R.id.date);
+                stepView = itemView.findViewById(R.id.steps);
+                goalReachedIcon = itemView.findViewById(R.id.goal_reached);
 
                 itemView.setOnClickListener(this);
             }
@@ -165,7 +170,7 @@ public class History extends Fragment {
             private void goToHistoryContent() {
                 Intent intent = new Intent(History.this.getActivity(), HistoryContent.class);
                 Bundle bundle = new Bundle();
-                bundle.putParcelable("data", historyContent.get(getAdapterPosition()));//historyContent.get(getAdapterPosition()));
+                bundle.putParcelable("data", historyContent.get(getAdapterPosition()));
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
