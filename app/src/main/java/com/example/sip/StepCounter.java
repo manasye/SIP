@@ -7,8 +7,10 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 //import android.app.Fragment;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.support.v4.app.Fragment;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sip.stepcounter.StepCounterListener;
 
@@ -85,62 +88,33 @@ public class StepCounter extends Fragment {
         View stepCounterView = inflater.inflate(R.layout.fragment_step_counter, container, false);
         Button shareButton = stepCounterView.findViewById(R.id.shareBtn);
         startButton = stepCounterView.findViewById(R.id.startBtn);
-        stepCountTextView = (TextView) stepCounterView.findViewById(R.id.stepCount);
-
-        // Set onclick listener on share button
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1
-                    );
-                } else if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1
-                    );
-                } else {
-                    LocationManager locationManager = (LocationManager) (getActivity().getSystemService(Context.LOCATION_SERVICE));
-                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) !=
-                            PackageManager.PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
-                                    != PackageManager.PERMISSION_GRANTED) {
-
-                        Log.d("[LOCATION]", "Failed to get permission");
-                        return;
-                    }
-                    try {
-                        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        if (location != null) {
-                            Double latitude = location.getLatitude();
-                            Double longitude = location.getLongitude();
-                            String uri = "http://maps.google.com/maps?daddr=" + latitude + "," + longitude;
-                            Log.d("URI", uri);
-                            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                            sharingIntent.setType("text/plain");
-                            String ShareSub = "Here is my location";
-                            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, ShareSub);
-                            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, uri);
-                            startActivity(Intent.createChooser(sharingIntent, "Share via"));
-                        } else {
-                            Log.d("[ERROR]", "Location manager could");
-                        }
-                    } catch (Exception e) {
-                        Log.d("[EXCEPTION]", "Location permission failed");
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+        stepCountTextView = stepCounterView.findViewById(R.id.stepCount);
 
         // Start button on click listener
         startButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.P)
             @Override
             public void onClick(View v) {
+                // Ask for Foreground Service if not yet granted
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.FOREGROUND_SERVICE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.FOREGROUND_SERVICE}, 1
+                    );
+
+                }
+                // Ask for Vibrate if not yet granted
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.VIBRATE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.VIBRATE}, 2
+                    );
+
+                }
+
+                // Granted
                 Intent intent = new Intent(getContext(), StepService.class);
                 if (StepService.isServiceRunning) {
                     intent.setAction(StepService.STOP_SERVICE);
@@ -158,8 +132,76 @@ public class StepCounter extends Fragment {
             }
         });
 
+        // Set onclick listener on share button
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Ask for Fine Location Service if not yet granted
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    Log.d("[FINE]", "Requesting fine location");
+                    requestPermissions(
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4
+                    );
+                }
+
+                // Granted
+                shareLoc();
+            }
+
+        });
 
         return stepCounterView;
+    }
+
+    private void shareLoc() {
+        LocationManager locationManager = (LocationManager) (getActivity().getSystemService(Context.LOCATION_SERVICE));
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+            Log.d("[LOCATION]", "Failed to get permission");
+            return;
+        }
+        try {
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null) {
+                Double latitude = location.getLatitude();
+                Double longitude = location.getLongitude();
+                String uri = "http://maps.google.com/maps?daddr=" + latitude + "," + longitude;
+                Log.d("URI", uri);
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String ShareSub = "Here is my location";
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, ShareSub);
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, uri);
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            } else {
+                Log.d("[ERROR]", "Location manager could");
+            }
+        } catch (Exception e) {
+            Log.d("[EXCEPTION]", "Location permission failed");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 4: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    shareLoc();
+                } else {
+                    Toast.makeText(getContext(), "Permission denied, can't access map", Toast.LENGTH_SHORT).show();
+                }
+            }
+            default:
+                Log.d("[REQ]", "Another request");
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
