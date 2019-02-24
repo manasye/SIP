@@ -35,8 +35,8 @@
             android:focusable="true"
             android:hint="@string/enter_name"
             android:inputType="text"
-            android:textColorHint="@color/colorGrey"
             android:textColor="@color/colorGrey"
+            android:textColorHint="@color/colorGrey"
             tools:ignore="Autofill" />
 
         <EditText
@@ -50,16 +50,16 @@
             android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword"
-            android:textColorHint="@color/colorGrey"
             android:textColor="@color/colorGrey"
+            android:textColorHint="@color/colorGrey"
             tools:ignore="Autofill" />
 
         <TextView
-            android:id="@+id/goToLogin"
+            android:id="@+id/goToRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/passwordField"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="60dp"
             android:onClick="goToRegister"
             android:text="@string/new_to_sip"
             android:textColor="@color/colorGrey" />
@@ -68,12 +68,11 @@
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@id/goToRegister"
             android:layout_centerHorizontal="true"
             android:background="@drawable/buttonshape"
             android:text="@string/login_title"
-            android:textColor="@color/colorPrimary"
-            />
+            android:textColor="@color/colorPrimary" />
 
     </RelativeLayout>
 </ScrollView>
