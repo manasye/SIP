@@ -9,8 +9,12 @@
     tools:showIn="@layout/activity_history_content">
 
     <TextView
+        android:id="@+id/history_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/content_history"/>
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

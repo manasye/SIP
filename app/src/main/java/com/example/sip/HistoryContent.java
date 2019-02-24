@@ -27,7 +27,7 @@ public class HistoryContent extends AppCompatActivity {
         }
         Intent intent = getIntent();
         String string = intent.getStringExtra("message");
-        TextView textView = findViewById(R.id.content_history);
+        TextView textView = findViewById(R.id.history_content);
         textView.setText(string);
 //        FloatingActionButton fab = findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {

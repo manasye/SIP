@@ -1,22 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="10dp"
+    android:orientation="horizontal"
     card_view:cardCornerRadius="5dp"
-    card_view:cardElevation="5dp"
-    android:layout_height="80dp">
+    card_view:cardElevation="5dp" >
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:textSize="24sp"
-        android:padding="10dp"
-        android:id="@+id/word"/>
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textSize="24sp"
+            tools:text="Date" />
+
+        <TextView
+            android:id="@+id/steps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/date"
+            android:padding="10dp"
+            android:text="XXX steps"
+            android:textSize="18sp"
+            tools:text="Steps" />
+
+        <ImageView
+            android:id="@+id/goal_reached"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="Lit if the current history item reached it's goal"
+            android:padding="10dp"
+            card_view:srcCompat="@drawable/ic_check_circle_green_24dp" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>
