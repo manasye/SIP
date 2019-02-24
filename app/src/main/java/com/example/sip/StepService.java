@@ -158,6 +158,9 @@ public class StepService extends Service implements StepCounterListener {
             }
         });
 
+        if (callback != null) {
+            callback.resetStartButton();
+        }
         stopSelf();
     }
 

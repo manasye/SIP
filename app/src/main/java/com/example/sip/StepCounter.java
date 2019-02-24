@@ -256,6 +256,10 @@ public class StepCounter extends Fragment {
         stepCountTextView.setText(Integer.toString(this.stepCount));
     }
 
+    public void resetStartButton() {
+        startButton.setText(getString(R.string.start_step));
+    }
+
     private void attachServiceListener() {
         StepService.callback = this;
     }
