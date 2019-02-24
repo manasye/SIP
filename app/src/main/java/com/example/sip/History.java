@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class History extends Fragment {
@@ -137,6 +138,9 @@ public class History extends Fragment {
 
             private void goToHistoryContent() {
                 Intent intent = new Intent(History.this.getActivity(), HistoryContent.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("data", historyContent.get(getAdapterPosition()));//historyContent.get(getAdapterPosition()));
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         }
