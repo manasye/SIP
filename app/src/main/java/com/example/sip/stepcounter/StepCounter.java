@@ -33,7 +33,6 @@ public class StepCounter implements SensorEventListener {
             sensorType = Sensor.TYPE_ACCELEROMETER;
             sp = new AccelStepCounter();
         }
-
     }
 
     /*
@@ -44,17 +43,20 @@ public class StepCounter implements SensorEventListener {
         this.caller = caller;
     }
 
+    public void clearListener() { this.caller = null; }
+
     /* Make the counter use native (dedicated hardware) step counter */
     public void useNativeStep() {
         this.sensorType = Sensor.TYPE_STEP_COUNTER;
         usedSensor = sm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        sp = new NativeStepCounter();
     }
 
     /* Make the counter use accelerometer to count steps (not accurate) */
     public void useAccelerometer() {
         this.sensorType = Sensor.TYPE_ACCELEROMETER;
         usedSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
+        sp = new AccelStepCounter();
     }
 
     /* Returns the type of sensor this counter use.
@@ -78,6 +80,7 @@ public class StepCounter implements SensorEventListener {
     /* Start counting steps */
     public void start() {
         stepCount = 0;
+        sp.refresh();
         sm.registerListener(this,usedSensor,SensorManager.SENSOR_DELAY_NORMAL);
     }
 
