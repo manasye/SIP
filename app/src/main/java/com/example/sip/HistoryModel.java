@@ -58,4 +58,8 @@ public class HistoryModel implements Parcelable {
     int getStepCount(){
         return this.stepCount;
     }
+
+    int getTarget(){
+        return this.target;
+    }
 }
