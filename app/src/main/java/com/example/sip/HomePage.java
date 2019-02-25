@@ -3,8 +3,10 @@ package com.example.sip;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -76,7 +78,14 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
 
         // Set Firebase Database persistance. It will cache data offline, so our app will still
         // works when offline.
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean persistenceSet = sp.getBoolean("firebase_persistence",false);
+        if (!persistenceSet) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("firebase_persistence", true);
+            editor.apply();
+        }
 
     }
 
