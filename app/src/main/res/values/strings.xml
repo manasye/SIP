@@ -17,6 +17,7 @@
     <string name="share_step">SHARE</string>
     <string name="history">HISTORY</string>
     <string name="step_goal_pref">step_goal</string>
+    <string name="integrate_pref">integrate_sip</string>
     <string name="logout_pref">logout_pref_button</string>
     <string name="sensor_select_pref">sensor_select</string>
     <string-array name="sensor_list">
@@ -32,5 +33,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_history_content">HistoryContent</string>
+    <string name="heart">HEART</string>
+    <string name="title_activity_history_content">History</string>
+    <string name="xxx_steps">XXX steps</string>
+    <string name="lit_if_the_current_history_item_reached_it_s_goal">Lit if the current history item reached it\'s goal</string>
 </resources>

@@ -22,4 +22,10 @@ public class NativeStepCounter implements StepProcessor {
 
         return tempCount;
     }
+
+    @Override
+    public void refresh() {
+        isInitialized = false;
+        lastStepCount = 0;
+    }
 }
