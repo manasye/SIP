@@ -34,6 +34,9 @@ public class HistoryContent extends AppCompatActivity {
 
         TextView stepCounterTextView = findViewById(R.id.step_count_content);
         stepCounterTextView.setText(String.valueOf(model.getStepCount()));
+
+        TextView targetTextView = findViewById(R.id.target_content);
+        targetTextView.setText(String.valueOf(model.getTarget()));
     }
 
     @Override
