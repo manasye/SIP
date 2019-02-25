@@ -19,7 +19,10 @@
             android:textStyle="bold"
             android:id="@+id/date"
             android:text="Date"
-            android:padding="8dp"/>
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
 
         <View
             android:layout_width="match_parent"
@@ -36,7 +39,10 @@
             android:layout_below="@id/line_date"
             android:textSize="15sp"
             android:gravity="left"
-            android:padding="8dp"/>
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -47,7 +53,10 @@
             android:textStyle="bold"
             android:layout_below="@id/target_content"
             android:text="Step Count"
-            android:padding="8dp" />
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <View
         android:layout_width="match_parent"
@@ -64,7 +73,10 @@
             android:layout_below="@id/line_step_count"
             android:textSize="15sp"
             android:layout_alignParentLeft="true"
-            android:padding="8dp"/>
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -75,7 +87,10 @@
             android:textStyle="bold"
             android:layout_below="@id/date_content"
             android:text="Target"
-            android:padding="8dp" />
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <View
             android:layout_width="match_parent"
@@ -92,7 +107,38 @@
             android:layout_below="@id/line_target"
             android:textSize="15sp"
             android:layout_alignParentLeft="true"
-            android:padding="8dp"/>
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
+
+        <View
+            android:layout_marginTop="50dp"
+            android:id="@+id/view_icon"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_below="@id/step_count_content"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/target_condition"
+            android:layout_below="@id/view_icon"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:padding="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/calories_content"
+            android:layout_below="@id/target_condition"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:padding="4dp"/>
 
     </RelativeLayout>
 
