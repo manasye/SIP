@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -31,6 +35,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,12 +56,12 @@ public class StepCounter extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-
     private String mParam1;
     private String mParam2;
 
     private Button startButton;
     private TextView stepCountTextView;
+    private ImageView weatherIcon;
     private int stepCount;
 
     private LocationManager locationManager;
@@ -99,6 +106,9 @@ public class StepCounter extends Fragment {
         ImageView heartImg = stepCounterView.findViewById(R.id.heartImg);
         startButton = stepCounterView.findViewById(R.id.startBtn);
         stepCountTextView = stepCounterView.findViewById(R.id.stepCount);
+        weatherIcon = stepCounterView.findViewById(R.id.weatherImg);
+        weatherIcon.setImageResource(R.drawable.cloudy);
+        weatherIcon.setVisibility(ImageView.VISIBLE);
 
         // Start button on click listener
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -166,6 +176,8 @@ public class StepCounter extends Fragment {
                 Toast.makeText(getContext(), "Coming soon...", Toast.LENGTH_SHORT).show();
             }
         });
+
+        new Weather(this).execute();
 
         return stepCounterView;
     }
@@ -322,5 +334,41 @@ public class StepCounter extends Fragment {
         if (StepService.isServiceRunning) {
             detachServiceListener();
         }
+    }
+
+    public void refreshWeatherIcon(Bitmap bitmap) {
+        weatherIcon.setImageBitmap(bitmap);
+    }
+
+    private class Weather extends AsyncTask<Void, Void, Bitmap> {
+
+        private StepCounter listener;
+
+        public Weather(StepCounter listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            Bitmap bitmap = null;
+            try {
+                URL url = new URL("http://openweathermap.org/img/w/10n.png");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.connect();
+                InputStream imgStream = conn.getInputStream();
+                bitmap = BitmapFactory.decodeStream(imgStream);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if ((listener != null) && (result != null)) {
+                listener.refreshWeatherIcon(result);
+            }
+        }
+
     }
 }
