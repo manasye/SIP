@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import java.util.Objects;
 
 public class History extends Fragment {
     public static final String HISTORY_REFRESH_EVENT = "history-refresh";
+    private static final String TAG_LOG = "[HISTORY]";
     private List<HistoryModel> historyContent = new ArrayList<>();
     private RVAdapter adapter;
     private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
@@ -45,6 +47,7 @@ public class History extends Fragment {
     }
 
     public void updateHistoryList() {
+        Log.d(TAG_LOG,"History update job received...");
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("stepdata");
         historyContent.clear();
@@ -93,10 +96,14 @@ public class History extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).registerReceiver(msgReceiver,
                 new IntentFilter(HISTORY_REFRESH_EVENT));
-
-        return rootView;
     }
 
     @Override

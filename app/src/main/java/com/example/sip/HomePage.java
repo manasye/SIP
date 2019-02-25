@@ -23,6 +23,7 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
 
@@ -72,6 +73,11 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+
+        // Set Firebase Database persistance. It will cache data offline, so our app will still
+        // works when offline.
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
     }
 
     @Override
