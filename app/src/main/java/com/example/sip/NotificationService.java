@@ -3,9 +3,11 @@ package com.example.sip;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -31,8 +33,14 @@ public class NotificationService extends FirebaseMessagingService {
             if (type != null) {
                 switch(type) {
                     case "walk_reminder":
-                        Log.d(TAG_LOG,"Walk reminder job received, firing notification...");
-                        fireWalkReminder();
+                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        boolean showNotification = sp.getBoolean(getString(R.string.reminder_pref),true);
+                        if (showNotification) {
+                            Log.d(TAG_LOG,"Walk reminder job received, firing notification...");
+                            fireWalkReminder();
+                        } else {
+                            Log.d(TAG_LOG,"Walk reminder received, but set to not notify, ignoring...");
+                        }
                         break;
                     default:
                         Log.d(TAG_LOG,"Received invalid payload!");

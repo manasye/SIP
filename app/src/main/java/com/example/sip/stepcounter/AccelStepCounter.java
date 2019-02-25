@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class AccelStepCounter implements StepProcessor {
 
-    private float mLimit = 4.44f; // "Sensitivity factor". Smaller values = more sensitive detection
+    private float mLimit = 6.25f; // "Sensitivity factor". Smaller values = more sensitive detection
     private float mLastValues[] = new float[3*2];
     private float mScale[] = new float[2];
     private float mYOffset;

@@ -20,6 +20,12 @@
         android:summary="Currently using"
         android:title="Sensor for step counting" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/reminder_pref"
+        android:summary="@string/reminder_pref_positive"
+        android:title="Reminders" />
+
     <Preference
         android:title="Connect to Nano S.I.P."
         android:icon="@drawable/ic_watch_black_24dp"

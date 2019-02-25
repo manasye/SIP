@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v14.preference.SwitchPreference;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -136,9 +137,11 @@ public class Settings extends AppCompatActivity {
 
                 int dailyGoal = Integer.parseInt(sp.getString(getString(R.string.step_goal_pref),"0"));
                 int sensorType = Integer.parseInt(sp.getString(getString(R.string.sensor_select_pref), "1"));
+                boolean receiveNotification = sp.getBoolean(getString(R.string.reminder_pref),true);
 
                 pref.child("dailyGoal").setValue(dailyGoal);
                 pref.child("sensorType").setValue(sensorType);
+                pref.child("receiveNotification").setValue(receiveNotification);
 
                 // Also updates today's stepdata target
                 String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
@@ -171,6 +174,15 @@ public class Settings extends AppCompatActivity {
                     }
                 }
                 lp.setSummary("Currently using " + getSensorDescription(Integer.parseInt(value)));
+                somethingChanged = true;
+            } else if (pref.getKey().equals(getString(R.string.reminder_pref))) {
+                SwitchPreference reminderSwitch = (SwitchPreference) pref;
+                boolean state = sp.getBoolean(key, true);
+                if (state) {
+                    reminderSwitch.setSummary(R.string.reminder_pref_positive);
+                } else {
+                    reminderSwitch.setSummary(R.string.reminder_pref_negative);
+                }
                 somethingChanged = true;
             }
         }
