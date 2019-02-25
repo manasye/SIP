@@ -2,18 +2,22 @@ package com.example.sip;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-//import android.app.Fragment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +28,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sip.stepcounter.Database;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
 import java.util.Objects;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 
 /**
@@ -36,19 +53,18 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class StepCounter extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
     private Button startButton;
     private TextView stepCountTextView;
+    private ImageView weatherIcon;
     private int stepCount;
+
+    private LocationManager locationManager;
 
     public StepCounter() {
         // Required empty public constructor
@@ -90,44 +106,44 @@ public class StepCounter extends Fragment {
         ImageView heartImg = stepCounterView.findViewById(R.id.heartImg);
         startButton = stepCounterView.findViewById(R.id.startBtn);
         stepCountTextView = stepCounterView.findViewById(R.id.stepCount);
+        weatherIcon = stepCounterView.findViewById(R.id.weatherImg);
+        weatherIcon.setImageResource(R.drawable.cloudy);
+        weatherIcon.setVisibility(ImageView.VISIBLE);
 
         // Start button on click listener
         startButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.P)
             @Override
             public void onClick(View v) {
-//                // Ask for Foreground Service if not yet granted
-//                if (ContextCompat.checkSelfPermission(getActivity(),
-//                        Manifest.permission.FOREGROUND_SERVICE)
-//                        != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions(getActivity(),
-//                            new String[]{Manifest.permission.FOREGROUND_SERVICE}, 1
-//                    );
-//
-//                }
-//                // Ask for Vibrate if not yet granted
-//                if (ContextCompat.checkSelfPermission(getActivity(),
-//                        Manifest.permission.VIBRATE)
-//                        != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions(getActivity(),
-//                            new String[]{Manifest.permission.VIBRATE}, 2
-//                    );
-//
-//                }
-
-                // Granted
                 Intent intent = new Intent(getContext(), StepService.class);
                 if (StepService.isServiceRunning) {
                     intent.setAction(StepService.STOP_SERVICE);
                     detachServiceListener();
                     startButton.setText(getString(R.string.start_step));
                 } else {
-                    stepCountTextView.setText(getString(R.string.default_step));
-                    intent.setAction(StepService.START_SERVICE);
-                    stepCountTextView.setText(getString(R.string.default_step));
-                    stepCount = 0;
-                    attachServiceListener();
-                    startButton.setText(getString(R.string.stop_step));
+                    com.example.sip.stepcounter.StepCounter temp = new com.example.sip.stepcounter.StepCounter(getContext());
+                    if (!temp.isAccelAvailable() && !temp.isNativeStepAvailable()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setCancelable(true);
+                        builder.setTitle("Error");
+                        builder.setMessage("There is no suitable sensor for your device!");
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        stepCountTextView.setText(getString(R.string.default_step));
+                        intent.setAction(StepService.START_SERVICE);
+                        stepCountTextView.setText(getString(R.string.default_step));
+                        stepCount = 0;
+                        attachServiceListener();
+                        startButton.setText(getString(R.string.stop_step));
+                    }
+
                 }
                 getContext().startService(intent);
             }
@@ -161,12 +177,14 @@ public class StepCounter extends Fragment {
             }
         });
 
+        new Weather(this).execute();
+
         return stepCounterView;
     }
 
     private void shareLoc() {
         LocationManager locationManager = (LocationManager) (Objects.requireNonNull(getActivity()).
-                getSystemService(Context.LOCATION_SERVICE));
+                getSystemService(LOCATION_SERVICE));
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -176,25 +194,69 @@ public class StepCounter extends Fragment {
             return;
         }
         try {
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            final Location location = getLastKnownLocation();
             if (location != null) {
-                Double latitude = location.getLatitude();
-                Double longitude = location.getLongitude();
-                String uri = "http://maps.google.com/maps?daddr=" + latitude + "," + longitude;
-                Log.d("URI", uri);
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                String ShareSub = "Here is my location";
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, ShareSub);
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, uri);
-                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+                DatabaseReference ref = Database.getInstance().getStepData();
+
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int stepCount = 0;
+                        for (DataSnapshot elm : dataSnapshot.getChildren()) {
+                            try {
+                                stepCount += elm.child("count").getValue(Integer.class);
+                            } catch (NullPointerException npe) {
+                                stepCount += 0;
+                            }
+                        }
+
+                        if (stepCount == 0) {
+                            stepCount = Integer.parseInt(stepCountTextView.getText().toString());
+                        }
+
+                        Double latitude = location.getLatitude();
+                        Double longitude = location.getLongitude();
+                        String uri = "http://maps.google.com/maps?daddr=" + latitude + "," + longitude;
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        String ShareSub = "Here is my location";
+                        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, ShareSub);
+                        sharingIntent.putExtra(Intent.EXTRA_TEXT, "Can beat my record ? " + stepCount
+                                + " steps.\n\n" + "Here is my last journey.\n\n" + uri);
+                        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Toast.makeText(getContext(), "Failed to fetch database", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             } else {
-                Log.d("[ERROR]", "Location manager could");
+                Log.d("[ERROR]", "Location manager could not been found");
             }
         } catch (Exception e) {
             Log.d("[EXCEPTION]", "Location permission failed");
             e.printStackTrace();
         }
+    }
+
+    private Location getLastKnownLocation() {
+        locationManager = (LocationManager)getContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
     }
 
     @Override
@@ -212,18 +274,10 @@ public class StepCounter extends Fragment {
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -233,7 +287,6 @@ public class StepCounter extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     /**
@@ -247,13 +300,15 @@ public class StepCounter extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     public void onStepDetected(int stepCount) {
         this.stepCount = stepCount;
         stepCountTextView.setText(Integer.toString(this.stepCount));
+    }
+
+    public void resetStartButton() {
+        startButton.setText(getString(R.string.start_step));
     }
 
     private void attachServiceListener() {
@@ -279,5 +334,41 @@ public class StepCounter extends Fragment {
         if (StepService.isServiceRunning) {
             detachServiceListener();
         }
+    }
+
+    public void refreshWeatherIcon(Bitmap bitmap) {
+        weatherIcon.setImageBitmap(bitmap);
+    }
+
+    private class Weather extends AsyncTask<Void, Void, Bitmap> {
+
+        private StepCounter listener;
+
+        public Weather(StepCounter listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            Bitmap bitmap = null;
+            try {
+                URL url = new URL("http://openweathermap.org/img/w/10n.png");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.connect();
+                InputStream imgStream = conn.getInputStream();
+                bitmap = BitmapFactory.decodeStream(imgStream);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if ((listener != null) && (result != null)) {
+                listener.refreshWeatherIcon(result);
+            }
+        }
+
     }
 }

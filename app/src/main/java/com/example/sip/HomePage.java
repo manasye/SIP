@@ -3,8 +3,10 @@ package com.example.sip;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -23,6 +25,9 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 
 public class HomePage extends AppCompatActivity implements StepCounter.OnFragmentInteractionListener {
@@ -40,16 +45,14 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
             startActivity(new Intent(HomePage.this, Login.class));
         }
 
-        // When logged in, get all data
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         TabLayout tabLayout = findViewById(R.id.sliding_tabs);
         // Set the text for each tab.
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_homepage));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_history));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.home));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.history));
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
@@ -72,12 +75,6 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
-        // Start fragment step counter
-//        StepCounter stepCounter = new StepCounter();
-//        FragmentManager fm = getFragmentManager();
-//        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-//        fragmentTransaction.add(R.id.layout_main, stepCounter);
-//        fragmentTransaction.commit();
 
     }
 
@@ -110,11 +107,5 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
     public void onBackPressed() {
         moveTaskToBack(true);
     }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
 
 }

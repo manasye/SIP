@@ -66,6 +66,10 @@
             android:layout_alignParentLeft="true"
             android:padding="8dp"/>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 02bb35bde5c9571d4a018bc1f5efcb94a245ff00
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

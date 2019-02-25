@@ -5,9 +5,9 @@ import android.os.Parcelable;
 
 public class HistoryModel implements Parcelable {
 
-    public String date;
-    public int stepCount;
-    public int target;
+    String date;
+    int stepCount;
+    int target;
 
     public HistoryModel() {
         this.date = "01-01-0001";
@@ -15,13 +15,13 @@ public class HistoryModel implements Parcelable {
         this.target = 0;
     }
 
-    public HistoryModel(String date, int stepCount, int target) {
+    HistoryModel(String date, int stepCount, int target) {
         this.date = date;
         this.stepCount = stepCount;
         this.target = target;
     }
 
-    public HistoryModel(Parcel in) {
+    private HistoryModel(Parcel in) {
         date = in.readString();
         stepCount = in.readInt();
         target = in.readInt();
@@ -51,11 +51,11 @@ public class HistoryModel implements Parcelable {
         dest.writeInt(target);
     }
 
-    public String getDate(){
+    String getDate(){
         return this.date;
     }
 
-    public int getStepCount(){
+    int getStepCount(){
         return this.stepCount;
     }
 }
