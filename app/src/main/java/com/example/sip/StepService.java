@@ -8,11 +8,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,14 +16,12 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.example.sip.stepcounter.Database;
 import com.example.sip.stepcounter.StepCounter;
 import com.example.sip.stepcounter.StepCounterListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
@@ -41,9 +35,6 @@ public class StepService extends Service implements StepCounterListener {
     private static final String NOTIF_CHANNEL = "[SIPFORGNDNOTIF]";
     private static final int FOREGROUND_SERVICE_ID = 1;
     public static com.example.sip.StepCounter callback = null;
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference ref = database.getReference("users").child(user.getUid()).child("stepdata");
     private String currentDate;
     private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -109,7 +100,7 @@ public class StepService extends Service implements StepCounterListener {
         currentDate = sdf.format(Calendar.getInstance().getTime());
 
         /* Saves today's target to Firebase */
-        final DatabaseReference prevData = ref.child(currentDate);
+        final DatabaseReference prevData = Database.getInstance().getStepData().child(currentDate);
         prevData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -135,7 +126,7 @@ public class StepService extends Service implements StepCounterListener {
         stopForeground(true);
 
         /* Updates value to Firebase */
-        final DatabaseReference prevData = ref.child(currentDate);
+        final DatabaseReference prevData = Database.getInstance().getStepData().child(currentDate);
         prevData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -10,27 +10,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.sip.stepcounter.Database;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormatSymbols;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class History extends Fragment {
     public static final String HISTORY_REFRESH_EVENT = "history-refresh";
+    private static final String TAG_LOG = "[HISTORY]";
     private List<HistoryModel> historyContent = new ArrayList<>();
     private RVAdapter adapter;
     private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
@@ -45,8 +45,8 @@ public class History extends Fragment {
     }
 
     public void updateHistoryList() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("stepdata");
+        Log.d(TAG_LOG,"History update job received...");
+        DatabaseReference ref = Database.getInstance().getStepData();
         historyContent.clear();
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -93,10 +93,14 @@ public class History extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).registerReceiver(msgReceiver,
                 new IntentFilter(HISTORY_REFRESH_EVENT));
-
-        return rootView;
     }
 
     @Override

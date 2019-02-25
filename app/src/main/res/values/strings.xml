@@ -37,4 +37,7 @@
     <string name="title_activity_history_content">History</string>
     <string name="xxx_steps">XXX steps</string>
     <string name="lit_if_the_current_history_item_reached_it_s_goal">Lit if the current history item reached it\'s goal</string>
+    <string name="reminder_pref">reminders</string>
+    <string name="reminder_pref_positive">Will be notified for daily step reminders</string>
+    <string name="reminder_pref_negative">Will not receive daily reminders</string>
 </resources>

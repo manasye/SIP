@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v14.preference.SwitchPreference;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,11 +14,10 @@ import android.support.v7.preference.Preference;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.sip.stepcounter.Database;
 import com.example.sip.stepcounter.StepCounter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
@@ -130,19 +130,20 @@ public class Settings extends AppCompatActivity {
 
             // Backing up preferences to Firebase
             if (somethingChanged) {
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference ref = database.getReference("users").child(authFirebase.getCurrentUser().getUid());
-                DatabaseReference pref = ref.child("preferences");
+                Database db = Database.getInstance();
+                DatabaseReference pref = db.getPreferences().child("preferences");
 
                 int dailyGoal = Integer.parseInt(sp.getString(getString(R.string.step_goal_pref),"0"));
                 int sensorType = Integer.parseInt(sp.getString(getString(R.string.sensor_select_pref), "1"));
+                boolean receiveNotification = sp.getBoolean(getString(R.string.reminder_pref),true);
 
                 pref.child("dailyGoal").setValue(dailyGoal);
                 pref.child("sensorType").setValue(sensorType);
+                pref.child("receiveNotification").setValue(receiveNotification);
 
                 // Also updates today's stepdata target
                 String date = new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
-                ref.child("stepdata").child(date).child("target").setValue(dailyGoal);
+                db.getStepData().child(date).child("target").setValue(dailyGoal);
 
                 Intent intent = new Intent(History.HISTORY_REFRESH_EVENT);
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
@@ -171,6 +172,15 @@ public class Settings extends AppCompatActivity {
                     }
                 }
                 lp.setSummary("Currently using " + getSensorDescription(Integer.parseInt(value)));
+                somethingChanged = true;
+            } else if (pref.getKey().equals(getString(R.string.reminder_pref))) {
+                SwitchPreference reminderSwitch = (SwitchPreference) pref;
+                boolean state = sp.getBoolean(key, true);
+                if (state) {
+                    reminderSwitch.setSummary(R.string.reminder_pref_positive);
+                } else {
+                    reminderSwitch.setSummary(R.string.reminder_pref_negative);
+                }
                 somethingChanged = true;
             }
         }
