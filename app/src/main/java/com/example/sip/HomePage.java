@@ -76,17 +76,6 @@ public class HomePage extends AppCompatActivity implements StepCounter.OnFragmen
             }
         });
 
-        // Set Firebase Database persistance. It will cache data offline, so our app will still
-        // works when offline.
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean persistenceSet = sp.getBoolean("firebase_persistence",false);
-        if (!persistenceSet) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putBoolean("firebase_persistence", true);
-            editor.apply();
-        }
-
     }
 
     @Override

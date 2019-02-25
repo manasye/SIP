@@ -17,15 +17,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.sip.stepcounter.Database;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormatSymbols;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -48,8 +46,7 @@ public class History extends Fragment {
 
     public void updateHistoryList() {
         Log.d(TAG_LOG,"History update job received...");
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("stepdata");
+        DatabaseReference ref = Database.getInstance().getStepData();
         historyContent.clear();
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
